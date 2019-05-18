@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>yousefodeh</title>
+    <style type="text/css">
+        .c{
+           padding:20px 25px;
+           margin: 40px 10px 40px 20px;
+           border:2px solid black;
+          }
+        #play{
+          border:2px solid black;
+          padding:20px 25px;
+          }
+        #w{
+          height : 400px;
+          }
+        .t{
+          padding:20px;
+          background-color:black;
+          color: white;
+          border: 1px solid black;
+          margin-left: 40px;
+          }  
+        .y{
+          float: left;  
+          }
+        .v{
+          padding:20px;
+          margin-right:80px;
+          }
+    </style>
+</head>
+<body>
+    <div style="border:3px solid black;" width="1000" height="1000" >
+        <div  style="border:1px solid black; background-color:#00FFFF" width="40" >
+            <button class="c  " style="background-color:white; " onclick="m3()">white</button>
+            <button class="c" style="background-color:yellow; "  onclick="m()">yellow</button>
+            <button class="c" style="background-color:red; "  onclick="m2()">red</button>
+            <button class="c" style="background-color:green; "  onclick="m4()" >green</button>
+
+            <div style="float:right; font-size:20px; margin:30px 30px 0px 0px;" id="score">   points : 0<br>
+               <div style="float:right; margin: 20px 0px 30px 10px; background-color:white;">
+                  <input type="button" " id="play" value="Start Playing" onClick="game()">
+              </div>
+            </div>  
+        <br>
+        <br>
+        <br>
+         <div id="w"  style="text-align:left;" >
+            <canvas  id="canvas" width="1000" height="400" style="float:right; margin-right:0px;" ></canvas>
+          <div class="y" style="text-align:center;">
+           <input class= " t" type="button" id="up" value="up" onClick="upButton()"/><br><br>
+           <input  class="t" type="button" id="left" value="left" onClick="leftButton()"/>
+           <input class="t" type="button" id="right" value="right" onClick="rightButton()"/><br><br>
+           <input class="t " type="button" id="down" value="down" onClick="downButton()"/>
+          </div>
+        </div>
+      </div>
+    </div>
+<script type="text/javascript">
+      var canvas = document.getElementById('canvas'); 
+      var ctx = canvas.getContext('2d');
+      var pText = document.getElementById('score');
+     
+document.addEventListener("keydown", keyPush);
+document.addEventListener("keydownCreate", keyPush);
+
+ctx.fillStyle = "rgb(180, 180, 180)";
+ctx.fillRect( 0, 0, canvas.width, canvas.height);  
+var step=20;
+var color="yellow";
+var score = 0;                   
+var meal = 0;                    
+mealx = 3;                       
+mealy = 3;
+var key = "";                                                        
+var pos = [];                 
+var px = 300, py = 300;              
+var b = 0;                
+var v=0;
+
+ pos.push([20, 0]);
+   function game(){
+    ctx.fillStyle = "rgb(180, 180, 180)";
+    ctx.fillRect( 0, 0, canvas.width, canvas.height);
+    key = "left";
+    
+    var timerId = setInterval(function() {
+        if(v==300){
+        if(key == "esc"){         
+            clearInterval(timerId);
+        }}
+        if (score<=-1) {
+             alert(" Game over ");
+        }
+        else{
+           
+        if(key == "left" || key == "up" || key == "down" || key == "right"){
+            Eatthesnake();
+            changePos();
+            Drawingsquares();
+
+        }}
+    },180);
+}
+function Eatthesnake(){
+    if(meal==0){
+        mealx = Math.floor(Math.random() * (800));
+        mealy = Math.floor(Math.random() * (380));
+        
+        while(mealx%20){
+         
+
+            mealx+=1;
+        }
+        while(mealy%20){
+            mealy+=1;
+        }
+        meal = 1;
+    }
+}
+function changePos(){
+    
+    if(pos[0][0] == mealx && pos[0][1] == mealy){ 
+        score++;
+        meal = 0;
+        b = 1;
+        
+        pos.push([0, 0]);
+
+    }
+    
+    if(px == pos[0][0] && py == pos[0][1]){
+        if(key == "left")px-=20;
+        if(key == "right")px+=20;
+        if(key == "up")py-=20;
+        if(key == "down")py+=20;
+
+    }
+    
+   if(px==canvas.width-20)
+          score-=1; 
+   if(py==canvas.height-20)
+          score-=1; 
+   if(px==0)
+         score-=1;
+     if(py==0)
+         score-=1;
+    if(px<0){
+         px = canvas.width-20;
+         score-=3;}
+    if(py<0){
+         py = canvas.height-20;
+         score-=3; }
+    if(px>canvas.width-20){
+         px = 0;
+         score-=3;}
+    if(py>canvas.height-20){
+         py = 0;
+         score-=3;  }
+    pos[0][0]=px;
+    pos[0][1]=py;
+
+}
+
+function m4(){
+      color="green";
+}
+function m3(){
+      color="white";
+}
+function m2(){
+      color="red";
+}
+function m(){
+      color="yellow";
+}
+function m1(){
+      ctx.fillStyle = color;
+}
+function Drawingsquares(){
+
+    pText.innerHTML = "prints: " + score;
+
+    ctx.fillStyle = "rgb(180, 180, 180)";
+    ctx.fillRect( 0, 0, canvas.width, canvas.height);
+
+    if(meal != 0){       
+        ctx.fillStyle = "blue";
+        ctx.fillRect( mealx+3, mealy+3, 12, 12);
+    }
+    if(b== 0){
+
+        ctx.fillStyle=color;
+        ctx.fillRect(pos[0][0], pos[0][1],20,20);
+        
+    }else{
+        b = 0;
+    }
+}
+function keyPush(e){
+    if(e.keyCode == 37){
+        if(key != "right" || key != "left"){
+            key = "left";
+            px-=20;
+        }       
+    }
+    if(e.keyCode == 38){
+        if(key != "down" || key != "up"){
+            key = "up";
+            py-=20;
+        }
+    }
+    if(e.keyCode == 39){
+        if(key != "left" || key != "right"){
+            key = "right";
+            px+=20;
+        }
+    }
+    if(e.keyCode == 40){
+        if(key != 'up' || key != "down"){
+            key = "down";
+            py+=20;
+        }
+    } 
+    if(e.keyCode == 27){
+        key = "esc";
+    }
+}
+function upButton(){
+    if(key != "down"|| key != "up"){
+        key = "up";
+        py-=20;
+    }
+}
+function downButton(){
+    if(key != 'up' || key != "down"){
+        key = "down";
+        py+=20;
+    }
+}
+function leftButton(){
+    if(key != "right" || key != "left"){
+        key = "left";
+        px-=20;
+    }   
+}
+function rightButton(){
+    if(key != "left" || key != "right"){
+        key = "right";
+        px+=20;
+    }
+}
+</script>
+</body>
+</html>
